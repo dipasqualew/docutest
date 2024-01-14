@@ -1,7 +1,8 @@
-import { describe, test, expect, beforeAll } from "vitest";
+import { describe, test, beforeAll, expect } from "vitest";
+
 
 beforeAll((suite) => {
-    suite.meta.title = "Magic Wand";
+    suite.meta.title = "Magic Wand (Without Expectations)";
     suite.meta.description = `
         The Magic Wand is the first item that players can win
         in their quest for magic.

@@ -4,5 +4,6 @@ declare module 'vitest' {
     interface TaskMeta {
         title?: string;
         description?: string;
+        expectations?: string[];
     }
 }

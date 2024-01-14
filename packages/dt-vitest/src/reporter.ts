@@ -4,6 +4,8 @@ import * as path from 'path';
 
 import { BasicReporter } from 'vitest/reporters'
 import type { File, Task } from '@vitest/runner'
+import type { Assertion, ExpectStatic } from '@vitest/expect'
+
 
 export class DocutestReporter extends BasicReporter {
     basePath: string;
@@ -54,6 +56,10 @@ export class DocutestReporter extends BasicReporter {
             });
         }
 
+        if (task.meta.expectations?.length) {
+            content.push(task.meta.expectations.map((expectation) => `- ${expectation}`).join('\n'));
+        }
+
         return `${'#'.repeat(level)} ${title}\n\n${content.join('\n\n')}`;
     }
 
@@ -63,3 +69,22 @@ export class DocutestReporter extends BasicReporter {
             .split('\n').map(line => line.trim()).join('\n');
     }
 }
+
+export const annotateTest = async (task: Task, description: string): Promise<ExpectStatic> => {
+    const { expect: vitestExpect } = await import("vitest")
+    task.meta.description = description;
+    task.meta.expectations = [];
+
+    const expectWrapper = (value: unknown, message: string | undefined): Assertion => {
+        if (message) {
+            (task.meta.expectations as string[]).push(message);
+            console.log(message);
+        }
+
+        return vitestExpect(value, message);
+    };
+
+    Object.assign(expectWrapper, vitestExpect);
+
+    return expectWrapper as ExpectStatic;
+};
