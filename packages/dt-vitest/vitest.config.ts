@@ -3,7 +3,7 @@ import { DocutestReporter } from './src/reporter'
 
 export default defineConfig({
     test: {
-        root: "./tests",
+        // root: "./tests",
         reporters: [
             "default",
             new DocutestReporter('./docs'),

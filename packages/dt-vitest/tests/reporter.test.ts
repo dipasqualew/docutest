@@ -7,7 +7,7 @@ import { DocutestReporter, annotateTest } from '../src/reporter';
 import { runVitest } from './utils';
 
 beforeAll((suite) => {
-    suite.meta.title = "DocutestReporter";
+    suite.meta.title = "api/DocutestReporter";
     suite.meta.description = `
         A Vitest customer reporter that leverages test annotations
         to generate documentation.
@@ -23,32 +23,39 @@ describe('DocutestReporter', () => {
         test("Without using expectations", async ({ task }) => {
             const expect = await annotateTest(task, `Tests can be run using Vitest's 'expect'.
                 However, in that case, the expectations won't be recorded
-                as additional documentation.`,
-            );
+                as additional documentation.
+            `);
 
-            await runVitest({
-                reporters: [new DocutestReporter(docutestReporterBasePath)],
-                root,
-            }, ["MagicWandWithoutExpectations"]);
-
-            const documentPath = path.resolve(docutestReporterBasePath, "Magic Wand (Without Expectations).md");
-            const documentContents = (await fs.readFile(documentPath)).toString()
-            expect(documentContents, `Generates the expected document without expectations`).toMatchSnapshot();
-        });
-
-        test("Using expectations", async ({ task }) => {
-            const expect = await annotateTest(task, `Users can leverage the 'annooateTest' function
-                to generate an extended 'expect' that will track expectations as 'expect' is called.`,
-            );
-
-            await runVitest({
+            const { stderr } = await runVitest({
                 reporters: [new DocutestReporter(docutestReporterBasePath)],
                 root,
             }, ["MagicWandWithExpectations"]);
 
-            const documentPath = path.resolve(docutestReporterBasePath, "Magic Wand (With Expectations).md");
+            expect(stderr, `Does not generate any errors in stdrr`).toEqual("");
+
+            const documentPath = path.resolve(docutestReporterBasePath, "Magic Wands/Without Expectations.md");
+            const documentContents = (await fs.readFile(documentPath)).toString()
+            expect(documentContents, `Generates the expected document without expectations`).toMatchSnapshot();
+            expect(documentContents, 'Contains the filename in the frontmatter').toContain("filename: MagicWandWithoutExpectations.test.ts");
+        });
+
+        test("Using expectations", async ({ task }) => {
+            const expect = await annotateTest(task, `
+                Users can leverage the 'annooateTest' function
+                to generate an extended 'expect' that will track expectations as 'expect' is called.
+            `);
+
+            const { stderr } = await runVitest({
+                reporters: [new DocutestReporter(docutestReporterBasePath)],
+                root,
+            }, ["MagicWandWithoutExpectations"]);
+
+            expect(stderr, `Does not generate any errors in stderr`).toEqual("");
+
+            const documentPath = path.resolve(docutestReporterBasePath, "Magic Wands/With Expectations.md");
             const documentContents = (await fs.readFile(documentPath)).toString()
             expect(documentContents, `Generates the expected document with expectations`).toMatchSnapshot();
+            expect(documentContents, 'Contains the filename in the frontmatter').toContain("filename: MagicWandWithExpectations.test.ts");
         });
     });
 });

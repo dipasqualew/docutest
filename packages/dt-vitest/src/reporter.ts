@@ -19,15 +19,23 @@ export class DocutestReporter extends BasicReporter {
         try {
             const files = this.ctx.state.getFiles(this.watchFilters);
 
-            files.forEach((file) => {
-                const parsed = this.parseFile(file);
-                const title = 'title' in file.meta ? file.meta.title : file.name.replace(/\W+/g, "__");
-                const filePath = path.resolve(this.basePath, `${title}.md`);
-                fs.writeFileSync(filePath, parsed);
-            });
+            await Promise.all(
+                files.map(async (file) => {
+                    const parsed = this.parseFile(file);
+                    const title = file.meta.title || file.name.replace(/\.(js|ts)/g, "");
+                    this.writeMarkdown(title, parsed);
+                })
+            );
         } catch (err) {
             console.log({ err })
         }
+    }
+
+    async writeMarkdown(title: string, parsed: string): Promise<void> {
+        const filePath = path.resolve(this.basePath, `${title}.md`);
+        const parent = path.dirname(filePath);
+        await fs.promises.mkdir(parent, { recursive: true });
+        await fs.promises.writeFile(filePath, parsed);
     }
 
     parseFile(file: File) {
@@ -38,7 +46,10 @@ export class DocutestReporter extends BasicReporter {
             parsedTasks.unshift(String(file.meta.description).trim());
         }
 
-        return this.parseBody(`# ${title}\n\n${parsedTasks.join('\n\n')}`);
+        const frontmatter = `---\nfilename: ${file.name}\n---\n\n`;
+        const body = this.parseBody(`# ${title}\n\n${parsedTasks.join('\n\n')}`);
+
+        return frontmatter + body;
     }
 
     parseTask(task: Task, level: number = 2) {
@@ -57,7 +68,8 @@ export class DocutestReporter extends BasicReporter {
         }
 
         if (task.meta.expectations?.length) {
-            content.push(task.meta.expectations.map((expectation) => `- ${expectation}`).join('\n'));
+            const expectations = task.meta.expectations.map((expectation) => `- ${expectation}`).join('\n');
+            content.push(`Expectations:\n${expectations}`);
         }
 
         return `${'#'.repeat(level)} ${title}\n\n${content.join('\n\n')}`;
@@ -78,7 +90,6 @@ export const annotateTest = async (task: Task, description: string): Promise<Exp
     const expectWrapper = (value: unknown, message: string | undefined): Assertion => {
         if (message) {
             (task.meta.expectations as string[]).push(message);
-            console.log(message);
         }
 
         return vitestExpect(value, message);

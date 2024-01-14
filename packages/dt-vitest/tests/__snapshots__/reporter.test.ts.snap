@@ -1,18 +1,23 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`DocutestReporter > Generates markdown files based on the contents of the tests > Using expectations 1`] = `
-"# Magic Wand (With Expectations)
+"---
+filename: MagicWandWithExpectations.test.ts
+---
+
+# Magic Wands/With Expectations
 
 The Magic Wand is the first item that players can win
 in their quest for magic.
 
-## Magic Wand
+## Magic Wand With Expectations
 
 ### Sends magics to the enemies
 
 The wand is a source of magics that players can use
 to send damage against their enemies.
 
+Expectations:
 - The enemy suffered damage
 
 ### Sends healings to friends
@@ -20,16 +25,21 @@ to send damage against their enemies.
 The wand is a source of magics that players can use
 to send healing to their friends.
 
+Expectations:
 - The healing is received"
 `;
 
 exports[`DocutestReporter > Generates markdown files based on the contents of the tests > Without using expectations 1`] = `
-"# Magic Wand (Without Expectations)
+"---
+filename: MagicWandWithoutExpectations.test.ts
+---
+
+# Magic Wands/Without Expectations
 
 The Magic Wand is the first item that players can win
 in their quest for magic.
 
-## Magic Wand
+## Magic Wand Without Expectations
 
 ### Sends magics to the enemies
 
