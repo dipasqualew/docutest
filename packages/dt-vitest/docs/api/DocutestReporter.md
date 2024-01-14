@@ -20,6 +20,7 @@ Expectations:
 - Does not generate any errors in stderr
 - Generates the expected document with expectations
 - Contains the filename in the frontmatter
+- Contains the expectations from the tests
 
 #### Without using expectations
 
@@ -31,3 +32,4 @@ Expectations:
 - Does not generate any errors in stdrr
 - Generates the expected document without expectations
 - Contains the filename in the frontmatter
+- Does not contain the expectations from the tests

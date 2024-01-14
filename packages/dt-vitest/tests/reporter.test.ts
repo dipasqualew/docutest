@@ -37,6 +37,7 @@ describe('DocutestReporter', () => {
             const documentContents = (await fs.readFile(documentPath)).toString()
             expect(documentContents, `Generates the expected document with expectations`).toMatchSnapshot();
             expect(documentContents, 'Contains the filename in the frontmatter').toContain("filename: MagicWandWithExpectations.test.ts");
+            expect(documentContents, 'Contains the expectations from the tests').toContain("Expectations:");
         });
 
         test("Without using expectations", async ({ task }) => {
@@ -57,6 +58,7 @@ describe('DocutestReporter', () => {
             const documentContents = (await fs.readFile(documentPath)).toString()
             expect(documentContents, `Generates the expected document without expectations`).toMatchSnapshot();
             expect(documentContents, 'Contains the filename in the frontmatter').toContain("filename: MagicWandWithoutExpectations.test.ts");
+            expect(documentContents, 'Does not contain the expectations from the tests').not.toContain("Expectations:");
         });
     });
 });
