@@ -1,0 +1,20 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DocutestReporter > Generates markdown files based on the contents of the tests 1`] = `
+"# Magic Wand
+
+The Magic Wand is the first item that players can win
+in their quest for magic.
+
+## Magic Wand
+
+### Sends magics to the enemies
+
+The wand is a source of magics that players can use
+to send damage against their enemies.
+
+### Sends healings to friends
+
+The wand is a source of magics that players can use
+to send healing to their friends."
+`;
